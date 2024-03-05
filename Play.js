@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 
 function Square({ value, onSquarePress }) {
   return (
@@ -20,17 +20,23 @@ function Board({ xIsNext, squares, onPlay }) {
   }
 
   const winner = calculateWinner(squares);
+  const isTie = squares.every(square => square !== null);
+
   let status;
   if (winner) {
     status = 'Winner: ' + winner;
-  } else {
+  } else if(isTie){
+    status = 'It is a Tie! Rematch?'
+  }
+  
+  else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
 
   return (
     <View>
       <View style={styles.status}>
-        <Text>{status}</Text>
+        <Text style={styles.winner}>{status}</Text>
       </View>
       <View style={styles.board}>
         {[0, 1, 2].map(row => (
@@ -66,10 +72,10 @@ export default function Game() {
   }
 
   const moves = history.map((squares, move) => {
-    const description = move > 0 ? 'Go to move #' + move : 'Go to game start';
+    const description = move > 0 ? 'Go back to step' + move : 'Replay';
     return (
       <TouchableOpacity key={move} onPress={() => jumpTo(move)}>
-        <Text>{description}</Text>
+        <Text style={styles.replay}>{description}</Text>
       </TouchableOpacity>
     );
   });
@@ -105,14 +111,30 @@ function calculateWinner(squares) {
 }
 
 const styles = StyleSheet.create({
+
+  winner: {
+    alignItems: 'center',
+    fontSize: 25,
+    fontWeight: '600'
+  },
+
+  replay: {
+    alignItems: 'center',
+    fontSize: 18,
+    fontWeight: '600'
+  },
+
   game: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff8dc',
   },
   status: {
-    marginBottom: 20,
+    paddingTop:50,
+    marginBottom: 50,
+    alignItems:'center'
   },
+
   board: {
     borderWidth: 1,
   },
@@ -120,9 +142,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   square: {
-    width: 80,
-    height: 80,
-    borderWidth: 1,
+    width: 100,
+    height: 100,
+    borderWidth: 0.2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -132,4 +154,23 @@ const styles = StyleSheet.create({
   gameInfo: {
     marginTop: 20,
   },
+
+  button: {
+    marginBottom: 30,
+    marginTop: 30,
+    width: 110,
+    alignItems: 'center',
+    backgroundColor: '#000',
+    borderColor: 'yellow',
+    borderWidth: 3,
+    borderRadius: 20,
+  },
+  buttonText: {
+    textAlign: 'center',
+    padding: 10,
+    color: 'white',
+    fontSize: 18,
+    fontWeight: "500",
+  },
+
 });
